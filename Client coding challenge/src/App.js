@@ -8,28 +8,52 @@ class App extends React.Component {
   constructor( props ){
     super( props );
     this.state = {
-      /*
-        Your code goes here
-      */
+      movies: []
     }
   }
   
-  /*
-    Your code goes here
-  */
+  getAllMovies = function() {
+      let url = "http://localhost:8080/api/movies"
+      let settings = {
+        method: "GET",
+        headers: {
+          "session-exam-token" : "success-token"
+        }
+      }
+
+      fetch(url, settings)
+      .then(response => {
+        if(response.ok) {
+          return response.json()
+        }
+      }).then(responseJson => {
+          console.log(responseJson)
+          this.setState({movies: responseJson})
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   
   componentDidMount(){
-    /*
-      Your code goes here
-    */
+    this.getAllMovies();
   }
 
   render(){
     return (
       <div>
-        {/*
-          Your code goes here
-        */}
+        <MovieForm onSubmit = {this.getAllMovies} movies = {this.movies}/>
+        <div class = "movieContainer">
+          {this.state.movies.map((movie) => {
+            return (
+              <Movie title = {movie.title}
+              year = {movie.year}
+              rating = {movie.rating}
+              id = {movie.id}
+              />
+            )
+          })}
+        </div>
       </div>
     );
   }
